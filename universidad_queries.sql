@@ -1,0 +1,28 @@
+select p.apellido1, p.apellido2, p.nombre from persona as p where p.tipo = "alumno" order by p.apellido1, p.apellido2, p.nombre desc;
+select p.apellido1, p.apellido2, p.nombre from persona as p where p.telefono is null;
+select p.apellido1, p.apellido2, p.nombre from persona as p where Year(p.fecha_nacimiento)=1999;
+select p.apellido1, p.apellido2, p.nombre, p.tipo, p.telefono, p.nif from persona p, profesor as t where p.id = t.id_profesor and p.tipo = "profesor" and p.telefono is null and p.nif like "%k";
+select * from asignatura a where a.cuatrimestre = 1 and a.curso = 3 and a.id_grado = 7;
+select p.apellido1, p.apellido2, p.nombre, d.nombre from persona p, profesor t, departamento d where (p.id = t.id_profesor) and (p.tipo = "profesor") and (t.id_departamento = d.id) order by p.apellido1,p.apellido2,p.nombre desc;
+select  p.nombre, p.nif, am.id_asignatura as "asignaturas", a.nombre, c.anyo_inicio, c.anyo_fin from persona p, alumno_se_matricula_asignatura am, asignatura a, curso_escolar c where (p.tipo = "alumno") and (p.nif = "26902806M") and (p.id = am.id_alumno) and (am.id_asignatura = a.id) and(am.id_curso_escolar = c.id);
+select distinct dp.nombre as "departamento", gd.nombre as "grado" from persona p, profesor t, departamento dp, asignatura ag, grado gd where (p.tipo = "profesor") and (p.id = t.id_profesor) and (t.id_departamento = dp.id) and (ag.id_profesor = t.id_profesor) and (gd.nombre = "Grado en Ingeniería Informática (Plan 2015)");
+select distinct p.nombre from persona p, alumno_se_matricula_asignatura asma, curso_escolar c where (p.tipo = "alumno") and (asma.id_alumno = p.id) and (c.id = asma.id_curso_escolar) and (c.anyo_inicio = 2018) ;
+select distinct p.nombre from persona p where (p.tipo = "profesor");
+select p.nombre, p.nif, f.id_departamento from persona p left join profesor f on p.id = f.id_profesor left join departamento d on f.id_departamento = d.id where p.tipo = "profesor" order by p.nombre asc;
+select p.nombre from persona p left join profesor t on p.id = t.id_profesor where p.tipo = "profesor" and id_profesor is null;
+select * from profesor where id_departamento is null; 
+select p.nombre from persona p left join profesor t on t.id_profesor = p.id left join asignatura ag on ag.id_profesor = t.id_profesor where p.tipo = "profesor" and ag.id_profesor is null;
+select * from asignatura ag where ag.id_profesor is null; 
+select d.nombre, ag.nombre from departamento d left join profesor t on t.id_departamento = d.id left join asignatura ag on ag.id_profesor = t.id_profesor left join alumno_se_matricula_asignatura asma on asma.id_asignatura = ag.id where ag.nombre is not null and asma.id_asignatura is null;
+select count(*) from persona where persona.tipo = "alumno";
+select count(*) from persona where persona.tipo = "alumno" and year(persona.fecha_nacimiento) = 1999;
+select d.nombre, count(t.id_profesor) as "total profesores" from profesor t, departamento d where d.id in (t.id_departamento) group by t.id_departamento order by count(t.id_profesor) desc;
+select d.nombre, count(t.id_profesor) as "total profesores" from departamento d left join profesor t on d.id = t.id_departamento group by d.nombre order by count(t.id_profesor) desc;
+select g.nombre, count(ag.id) as "total asignaturas" from grado g left join asignatura ag on g.id = ag.id_grado group by g.nombre order by count(ag .id) desc; 
+select g.nombre, count(ag.id) as "total asignaturas" from grado g left join asignatura ag on g.id = ag.id_grado group by g.nombre having total_asignaturas > 40 order by count(ag.id) desc; 
+select g.nombre, ag.tipo, sum(ag.creditos) as "total créditos" from grado g inner join asignatura ag on g.id = ag.id_grado group by ag.tipo order by sum(ag.creditos) desc;
+select c.anyo_inicio as "Año inicio", count(asma.id_alumno) as "Alumnos x año" from curso_escolar c inner join alumno_se_matricula_asignatura asma on c.id = id_curso_escolar group by c.anyo_inicio;
+select p.id, p.nombre, p.apellido1, p.apellido2, count(ag.id) as "num asignaturas" from profesor t left join asignatura ag on t.id_profesor = ag.id_profesor right join persona p on t.id_profesor = p.id group by t.id_profesor order by count(ag.id) desc; 
+select * from persona where fecha_nacimiento = (select max(fecha_nacimiento) from persona) and tipo ='alumno'; 
+select p.* from persona p where id in (select t.id_profesor from profesor t) and not exists (select ag.id_profesor from asignatura ag where ag.id_profesor = p.id) and p.tipo = 'profesor'; 
+
